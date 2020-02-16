@@ -7,7 +7,7 @@ import (
 )
 
 type CustomReadWriteCloser struct {
-	ReadFunction func([]byte) (int, error)
+	ReadFunction  func([]byte) (int, error)
 	WriteFunction func([]byte) (int, error)
 	CloseFunction func() error
 }
@@ -36,7 +36,7 @@ func (rwc *CustomReadWriteCloser) Read(b []byte) (n int, err error) {
 
 func (rwc *CustomReadWriteCloser) Write(b []byte) (n int, err error) {
 	defer func() { err = errors.Wrap(err) }()
-	if rwc.ReadFunction == nil {
+	if rwc.WriteFunction == nil {
 		return 0, &ErrWriteFunctionNotDefined{}
 	}
 	return rwc.WriteFunction(b)
@@ -44,7 +44,7 @@ func (rwc *CustomReadWriteCloser) Write(b []byte) (n int, err error) {
 
 func (rwc *CustomReadWriteCloser) Close() (err error) {
 	defer func() { err = errors.Wrap(err) }()
-	if rwc.ReadFunction == nil {
+	if rwc.CloseFunction == nil {
 		return &ErrCloseFunctionNotDefined{}
 	}
 	return rwc.CloseFunction()
